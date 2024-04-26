@@ -2,10 +2,10 @@
 # Telegram
 
 # Telegram Bot API token
-TELEGRAM_BOT_TOKEN = False
+TELEGRAM_BOT_TOKEN = "6976493225:AAF4TlVvfyEGMymsNZ8jgW2SxYM_mnRZx94"
 
 # Telegram Group ID
-TELEGRAM_GROUP_CHAT_ID = False
+TELEGRAM_GROUP_CHAT_ID = "-4158572808"
 
 
 # URL of web page tp scrape
