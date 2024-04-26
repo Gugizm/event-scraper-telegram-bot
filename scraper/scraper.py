@@ -5,7 +5,7 @@ from datetime import datetime, time
 
 class Scraper:
     def __init__(self, driver, url) -> None:
-        self._driver = driver
+        self._driver = webdriver.Chrome()
         self._driver.get(url)
         print(self._driver)
 
@@ -21,6 +21,7 @@ class Scraper:
                 event['time'] = row.find_element(By.CLASS_NAME, "time").text
                 if event['time'] == 'Time':
                     continue
+                event['id'] = row.get_attribute("id")
                 event['flag'] = row.find_element(By.CLASS_NAME, "flagCur").text
                 event['event'] = row.find_element(By.CLASS_NAME, "event").text
                 event['actual'] = row.find_element(By.CLASS_NAME, "act").text
