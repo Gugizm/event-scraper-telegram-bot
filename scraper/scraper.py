@@ -1,55 +1,40 @@
-import requests
-from datetime import datetime
-from bs4 import BeautifulSoup
-
-#class:theDay - day
-#class:event - event
-#class:flagCur - flag
-#class:time - time
-#class:act - actual
-#class:fore - forcast
-#class:prev - previus
+from selenium import webdriver
+from selenium.webdriver.common.by import By
+from datetime import datetime, time
 
 
-#with data if date is current date then scrap what is 
-#first need to check that date is today
-#if date == today lets take first hours when starts and what starts and befor 30 minuts call again this code
-#if there is no date lets call every half hours
-
-class TableParser:
-    def __init__(self, html_content):
-        self.html_content = html_content
+class Scraper:
+    def __init__(self, driver, url) -> None:
+        self._driver = driver
+        self._driver.get(url)
+        print(self._driver)
 
 
-    def parse_event(self):
-        try:
-            soup = BeautifulSoup(self.html_content, 'lxml')
-            # Select the economic calendar
-            table = soup.select('table.genTable')[0]
-            # Day of event
-            scrape_date = table.select_one('tr td.theDay')
+    def parse(self):
+        rows = self._driver.find_elements(By.TAG_NAME, 'tr')
 
-            date_str = scrape_date.get_text()
-            event_date = datetime.strptime(date_str, "%A, %B %d, %Y").date()
-            
-            # if event_date == datetime.now().date():
-            if True:
-                parent_tr = scrape_date.find_parent('tr')
-                parsed_event = parent_tr.find_next('tr')
-                print(parsed_event)
-                event = {
-                    'time': parsed_event.select_one('td.time').get_text(),
-                    'country': parsed_event.select_one('td.flagCur').get_text(),
-                    'event_name': parsed_event.select_one('td.event').get_text().strip(), 
-                    'actual': parsed_event.select_one('td.act').get_text().strip(),
-                    'forcast': parsed_event.select_one('td.fore'),
-                    'previous': parsed_event.select_one('td.prev').get_text().strip()
-                }
-
-                return event
-        
-        except Exception as e:
-            print(f"An error occurred while parsing HTML content here: {e}")
+        events = []
+        for row in rows:
+            event = {}
+            print(row.text)
+            try:
+                event['time'] = row.find_element(By.CLASS_NAME, "time").text
+                if event['time'] == 'Time':
+                    continue
+                event['flag'] = row.find_element(By.CLASS_NAME, "flagCur").text
+                event['event'] = row.find_element(By.CLASS_NAME, "event").text
+                event['actual'] = row.find_element(By.CLASS_NAME, "act").text
+                event['forcast'] = row.find_element(By.CLASS_NAME, "fore").text
+                event['previous'] = row.find_element(By.CLASS_NAME, "prev").text
+                
+                events.append(event)
+            except Exception:
+                continue
+        print(events)
+        return events
 
 
-
+    @staticmethod
+    def time_parser(time_str):
+        parsed_time = datetime.strftime(time_str, "%H:%M").time()
+        return parsed_time        
