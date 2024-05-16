@@ -1,6 +1,5 @@
 import requests
 import asyncio
-from telegram.ext import Updater
 import telegram
 
 FINNHUB_API_KEY = "cobf5a1r01qomlfdst0gcobf5a1r01qomlfdst10"

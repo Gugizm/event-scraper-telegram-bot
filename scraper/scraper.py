@@ -1,41 +1,53 @@
-from selenium import webdriver
+import logging
 from selenium.webdriver.common.by import By
-from datetime import datetime, time
+from abstract_classes import AbstractEvent
+from event import Event
 
 
 class Scraper:
-    def __init__(self, driver, url) -> None:
-        self._driver = webdriver.Chrome()
-        self._driver.get(url)
-        print(self._driver)
+    def __init__(self, driver, url, event_maker: AbstractEvent):
+        self._driver = driver
+        self._url = url
+        self._event = event_maker
+
+
+    def restart(self):
+        self._driver.get(self._url)
 
 
     def parse(self):
-        rows = self._driver.find_elements(By.TAG_NAME, 'tr')
+        self.restart()
+        rows = self._driver.find_elements(By.TAG_NAME, "tr")
 
-        events = []
         for row in rows:
-            event = {}
-            print(row.text)
             try:
-                event['time'] = row.find_element(By.CLASS_NAME, "time").text
-                if event['time'] == 'Time':
+                event_date = row.get_attribute("event_timestamp")
+                if not event_date:
                     continue
-                event['id'] = row.get_attribute("id")
-                event['flag'] = row.find_element(By.CLASS_NAME, "flagCur").text
-                event['event'] = row.find_element(By.CLASS_NAME, "event").text
-                event['actual'] = row.find_element(By.CLASS_NAME, "act").text
-                event['forcast'] = row.find_element(By.CLASS_NAME, "fore").text
-                event['previous'] = row.find_element(By.CLASS_NAME, "prev").text
-                
-                events.append(event)
-            except Exception:
+
+                yield self._event.create_event(
+                id = row.get_attribute("id"),
+                date = event_date,
+                flag = row.find_element(By.CLASS_NAME, "flagCur").text,
+                title = row.find_element(By.CLASS_NAME, "event").text,
+                actual = row.find_element(By.CLASS_NAME, "act").text,
+                forcast = row.find_element(By.CLASS_NAME, "fore").text,
+                previous = row.find_element(By.CLASS_NAME, "prev").text
+                )
+
+            except ValueError:
                 continue
-        print(events)
-        return events
+            except Exception as e:
+                logging.error(f'while trying to scrape by tr occurred error - {e}!')
+ 
 
-
-    @staticmethod
-    def time_parser(time_str):
-        parsed_time = datetime.strftime(time_str, "%H:%M").time()
-        return parsed_time        
+    def scrap_id(self, event: Event):
+        self.restart()
+        try:
+            scraped_event = self._driver.find_element(By.ID, event.id)
+            event.actual = scraped_event.find_element(By.CLASS_NAME, "act").text
+            event.forcast = scraped_event.find_element(By.CLASS_NAME, "fore").text
+            event.previous = scraped_event.find_element(By.CLASS_NAME, "prev").text
+        except Exception as e:
+            logging.error(f'while trying to scrape by ID occurred error - {e}!')
+        
