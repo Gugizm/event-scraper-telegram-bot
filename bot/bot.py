@@ -1,8 +1,8 @@
 import logging
 import asyncio
 import telegram
-from scraper import AbstractEvent
 
+logger = logging.getLogger(__name__)
 
 class TelegramBot:
     def __init__(self, token, chat_id):
@@ -11,16 +11,16 @@ class TelegramBot:
         
     
     async def send_message(self, message):
-        tryies = 3
-        while tryies != 0:
-            try:
-                await self._bot.send_message(chat_id=self._chat_id, text=message, parse_mode="Markdown")
-                return True
-            except Exception as e:
-                logging.error(f'While trying to send message to telegram bot occurred error {e}!')
-                tryies -= 1
-        await self.error_message()
+        try:
+            await self._bot.send_message(chat_id=self._chat_id, text=message, parse_mode="Markdown")
+        except TimeoutError:
+            await asyncio.sleep(5)
+        except Exception as e:
+            logger.error(f'While trying to send message, occurred error {e}!')
+            raise Exception(f'While trying to send message, occurred error {e}!')
     
+
     async def error_message(self):
         error = '**Warning!**\nDetected ERROR!!!\nContact with support\n'
-        await self._bot.send_message(chat_id=self._chat_id, text=error, parse_mode="Markdown")
+        await self.send_message(error)
+        

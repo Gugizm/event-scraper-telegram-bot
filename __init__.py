@@ -17,6 +17,7 @@ logger.addHandler(file_handler)
 logger.setLevel(logging.INFO)
 
 # Import modules
+from . import manage
 from . import scraper
 from . import bot
 

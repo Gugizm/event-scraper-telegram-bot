@@ -9,6 +9,9 @@ class AbstractEvent(ABC):
     def __eq__(self):
         pass
 
+    @abstractmethod
+    def markdown(self):
+        pass
 
 
 class AbstractDateManager(ABC):
@@ -16,28 +19,40 @@ class AbstractDateManager(ABC):
     def __init__(self):
         pass
 
-
     @abstractmethod
     def date_compare(self):
         pass
-
 
     @abstractmethod
     def calculate_reminder(self):
         pass
     
 
-
-class DateCompeare(ABC):
-    def __init__(self, date):
-        self.date = date
-
-
-    def date_comp(self):
-        pass
-
-
-class EventScheduler(ABC):
+class AbstractEventManager(ABC):
     @abstractmethod
-    def scheduler(self):
+    def __init__(self):
         pass
+
+    @abstractmethod
+    def allocate_events(self):
+        pass
+
+    @abstractmethod
+    def schedule_event(self):
+        pass
+
+    @abstractmethod
+    def send_markdown(self):
+        pass
+
+
+class AbstractEventFactrory(ABC):
+    @abstractmethod
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def create_event(Self):
+        pass
+
+

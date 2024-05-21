@@ -1,7 +1,7 @@
-from datetime import datetime, time, timedelta
 import pytz
+from datetime import datetime, timedelta
 from tzlocal import get_localzone 
-from scraper.abstract_classes import AbstractDateManager
+from manage.abstract_classes import AbstractDateManager
 
 
 class DateManager(AbstractDateManager):
@@ -9,8 +9,7 @@ class DateManager(AbstractDateManager):
         self._date = date
         self._event_date = self.date_compare()
         self._reminder = self.calculate_reminder()
-    #can provide sleep method, to not to iterate to much while loo
-    #or in event class define date = datemanager and thrn use its things
+
 
     @property
     def event_date(self):
@@ -39,7 +38,3 @@ class DateManager(AbstractDateManager):
         event_date = datetime.strptime(date, "%Y-%m-%d %H:%M:%S")
         event_date = pytz.utc.localize(event_date).astimezone(get_localzone())
         return event_date
-    
-
-        
-

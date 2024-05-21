@@ -1,4 +1,4 @@
-from abstract_classes import AbstractEvent, AbstractTimeManager
+from manage import AbstractEvent 
 
 
 class Event(AbstractEvent):
@@ -12,9 +12,17 @@ class Event(AbstractEvent):
         self._forcast = forcast
         self._previous = previous
 
+
+    def __eq__(self, other):
+        if isinstance(other, Event):
+            return self._id == other._id
+        return False
+
+
     @property
     def id(self):
         return self._id
+
 
     @property
     def dates(self):
@@ -25,39 +33,41 @@ class Event(AbstractEvent):
     def flag(self):
         return self._flag
     
+
     @property
     def title(self):
         return self._title
+
 
     @property
     def actual(self):
         return self._actual
     
+
     @actual.setter
     def actual(self, new_actual):
         self._actual = new_actual
+
 
     @property
     def forcast(self):
         return self._forcast
     
+
     @forcast.setter
     def forcast(self, new_forcast):
         self._forcast = new_forcast
     
+
     @property
     def previous(self):
         return self._previous
+
 
     @previous.setter
     def previous(self, new_previous):
         self._previous = new_previous
 
-    def __eq__(self, other):
-        if isinstance(other, Event):
-            return self._id == other._id
-        return False
-    
 
     def markdown(self):
         title = f'Event: {self._title}'
@@ -70,8 +80,8 @@ class Event(AbstractEvent):
         markdown_text = ''
         for var in vars:
             if var and var != previous:
-                markdown += f'{var}\n'
+                markdown_text += f'{var}\n'
             elif var == previous:    
-                markdown += f'{var}'
+                markdown_text += f'{var}'
         return markdown_text
 
