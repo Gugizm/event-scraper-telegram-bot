@@ -30,3 +30,9 @@ To run EventScraperTelegramBot, execute the `main.py` script:
 
 ```bash
 python main.py
+
+## Contributing
+Contributions to EventScraperTelegramBot are welcome! If you have any suggestions, bug fixes, or new features to add, feel free to submit a pull request.
+
+## Contact
+For any inquiries or feedback, please contact Guga at gugizm@gmail.com.
